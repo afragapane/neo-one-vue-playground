@@ -1,18 +1,23 @@
 /* @hash d821d712b022cd0d29abf199a289a0f0 */
 // tslint:disable
 /* eslint-disable */
-import { Client, DeveloperClients, UserAccountProviders } from '@neo-one/client';
+import { Client, DeveloperClients } from '@neo-one/client';
+import { createClient, createDeveloperClients } from './client';
 import { Contracts } from './contracts';
-import { DefaultUserAccountProviders } from './client';
+import { createTokenSmartContract } from './Token/contract';
+import { createICOSmartContract } from './ICO/contract';
 
-export class ContractsService<TUserAccountProviders extends UserAccountProviders<any> = DefaultUserAccountProviders> {
-  public client: Client<TUserAccountProviders>;
+export class ContractsService {
+  public client: Client;
   public developerClients: DeveloperClients;
   public token: Contracts['token'];
   public ico: Contracts['ico'];
 
   constructor() {
-    this.setHost();
+    this.client = createClient();
+    this.developerClients = createDeveloperClients();
+    this.token = createTokenSmartContract(this.client);
+    this.ico = createICOSmartContract(this.client);
   }
 
   public setHost(host?: string) {
@@ -23,4 +28,4 @@ export class ContractsService<TUserAccountProviders extends UserAccountProviders
   }
 }
 
-export const instance: ContractsService;
+export const instance = new ContractsService();
